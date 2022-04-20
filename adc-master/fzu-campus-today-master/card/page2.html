@@ -1,0 +1,281 @@
+<head>
+    <meta name="format-detection" content="telephone=no"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no"/>
+    <link rel="stylesheet" type="text/css"
+          href="./wechat/style.css"/>
+    <link rel="stylesheet" type="text/css"
+          href="./wechat/style-newindex.css"/>
+    <link rel="stylesheet" type="text/css"
+          href="./wechat/weui.min.css"/>
+    <link rel="stylesheet" type="text/css"
+          href="./wechat/mescroll.min.css"/>
+		  
+	<script type="text/javascript" src="https://res.wx.qq.com/open/js/jweixin-1.4.0.js"></script>
+	
+	<script type="text/javascript"
+			src="./wechat/jquery-3.5.1.min.js"></script>
+    <script type="text/javascript"
+            src="./wechat/common.js"></script>
+    <script type="text/javascript"
+            src="./wechat/wechat_common.js"></script>
+		  
+	<script type="text/javascript"
+		src="./wechat/base64.min.js"></script>
+	<script type="text/javascript"
+		src="./wechat/json2.js"></script>
+    <script type="text/javascript"
+            src="./wechat/weui.min.js"></script>
+    <script type="text/javascript"
+            src="./wechat/mescroll.min.js"></script>
+</head>
+
+<!DOCTYPE html>
+<html>
+<head>
+    
+    <title>福州大学一卡通</title>
+    <link rel="stylesheet" type="text/css"
+          href="./wechat/style-newindex.css"/>
+    <link rel="stylesheet" type="text/css"
+          href="./wechat/newindex-card.css" />
+   
+    <script>
+		window.onerror = function(errorMessage, scriptURI, lineNumber,columnNumber,errorObj) { 
+			/*alert("错误信息：" +errorMessage+",出错文件："+scriptURI+"出错行号："+lineNumber+"出错列号："+columnNumber+"错误详情："+errorObj); */
+		}
+        $(document).ready(function () {
+            $("#New-Body").show();
+            $("#New-Body .new-head.new-head-s2").show();
+            var widthP = document.documentElement.clientWidth;
+            var widthS = $(".new-body .new-head-s2 ").outerWidth();
+            $(".new-body .new-head-s2").css("margin-left", (widthP - widthS) / 2);
+
+        })
+    </script>
+    
+    <script type="text/javascript">
+        var errNum = 0;
+        $(function () {
+            var user = getParam("user")
+            if(user == 'ZY'){
+                $('#avatar').attr("src", "./images/ZY.png")
+            } else if(user == 'CC'){
+                $('#avatar').attr("src", "./images/CC.png")
+            } else if(user == 'ZF'){
+                $('#avatar').attr("src", "./images/ZF.png")
+            } else if(user == 'LB'){
+                $('#avatar').attr("src", "./images/LB.png")
+            } else if(user == 'DC'){
+                $('#avatar').attr("src", "./images/DC.png")
+            } else {
+                $('#avatar').attr("src", "./images/LB.png")
+            }
+            
+            setCardBalance();
+            setIdino();
+            var subCardInfo = {"slaves":[],"errmsg":"无数据","retcode":"00000"}
+            showSubCardApplication(subCardInfo);
+            var shallMessageSwitch = $('#shallMessageSwitch').val();
+            if (shallMessageSwitch == '1') {
+                selectAllMessage();
+            }
+
+            $('#qrcode').click(function(){
+                var value1 = getParam("userName")
+                var value2 = getParam("deptName")
+                var value3 = getParam("marqueeStr")
+                var url = "./page3.html?userName="
+                + value1 + "&deptName=" + value2 + "&marqueeStr=" + value3;
+                url=encodeURI(url);
+                window.location.href=url;
+            })
+        });
+        function getParam(name) {
+                var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)");
+                var r = window.location.search.substr(1).match(reg);
+                if (r != null)
+                    return decodeURI(r[2]);   //对参数进行decodeURI解码
+                return null;
+            }
+        function setCardBalance() {
+                $('#status').html('正常');
+                $('#total_asset').html('9.16');
+                $('#db_balance').html('102.20');
+                $('#unsettle_amount').html('-93.04');
+                $('#acc_balance').html('0.00');
+        }
+
+        function setIdino() {
+            var userName = getParam("userName")
+            $('#indexUserName').html(userName);
+            var sno = getParam("sno")
+            $('#indexSno').html(sno)
+            var deptName = getParam("deptName");;
+            $('#indexDeptName').html(deptName);
+            $('#pidclass').val(1);
+        }
+
+        function showSubCardApplication(retMap) {
+            var subCardFlag = false;
+            if (checkRequestFlag(retMap)) {
+                subCardFlag = true;
+            }
+            var allSchoolJk = '[{"jkbh":"0001","icon":"ioc-use.png","name":"基本信息"},{"jkbh":"qrcode","icon":"ioc-06.png","name":"二维码"},{"jkbh":"0002","icon":"ioc-recharge.png","name":"卡片充值"},{"jkbh":"0005","icon":"ioc-pass.png","name":"密码修改"},{"jkbh":"0010","icon":"ioc-bill.png","name":"我的账单"},{"jkbh":"0004","icon":"ioc-03.png","name":"挂失\/解挂"},{"jkbh":"0022","icon":"app_bind2.png","name":"他人卡充值"},{"jkbh":"0008","icon":"ioc-04.png","name":"卡片解绑"}]';
+            var JkList = $.parseJSON(allSchoolJk);
+            var pidclass = $('#pidclass').val();
+            $.each(JkList, function (i, e) {
+                var showFlag = false;
+                var jkbh = e.jkbh;
+                if (jkbh == '0012' || jkbh == '0013') {
+                    showFlag = subCardFlag;
+                } else {
+                    showFlag = true;
+                }
+                //申请退费功能只有学生身份可以使用
+                if (jkbh == "0028" && pidclass != "1") {
+                    showFlag = false;
+                }
+                var listLength = $('#jk_list').find('.new-application-item').length;
+                if (listLength >= 12) {
+                    showFlag = false;
+                }
+                if (showFlag) {
+                    var name = e.name;
+                    var icon = e.icon;
+                    $('#jk_list').append('<li class="new-application-item"><a id="'+ jkbh + '"><i class="new-ico"><img src="./wechat/images/' + icon +
+                        '"></i><span class="new-span">' + name + '</span></a></li>');
+                }
+
+            });
+        }
+
+        var pageindex = 1;
+        var pagesize = 3;
+
+        function moremesg() {
+            window.location.href = createUrl("/notice/news")
+        }
+
+        function toPayCode() {
+            window.location.href = createUrl("/url/redirectJkbh") + '?jkbh=0018';
+        }
+
+        function selectAllMessage() {
+            getMessage(pageindex, pagesize, setMessage);
+        }
+
+        function setMessage(retMap) {
+            if (checkRequestFlag(retMap)) {
+                showMessage(retMap);
+            }
+        }
+
+        function getMessage(pageindex, pagesize, callback) {
+            var url = createUrl("/home/message");
+            var param = {
+                pageindex: pageindex,
+                pagesize: pagesize
+            };
+            ajax(url, param, callback, true);
+        }
+
+        function showMessage(retMap) {
+            var data = retMap.data.rows;
+            var total = retMap.data.total;
+            var array = data;
+            var html = '';
+            if (array.length == 0) {
+                $('#ul').html('<li class="new-notic-item"><p>暂无通知公告消息</p><em></em></li>');
+                clearInterval(codnum);
+            } else {
+                var shallGatewayUrl = $('#shallGatewayUrl').val();
+                for (var i = 0; i < array.length; i++) {
+                    html += '<li class="new-notic-item">' +
+                        '<a style="text-decoration: none;color:inherit;" href="' + shallGatewayUrl + '/Category/pPageDetails?id=' + array[i].ID + '&title=' + array[i].TITLE
+                        + '&newsdetailsname=' + array[i].NEWSDETAILSNAME + '&pagename=' + array[i].PAGENAME
+                        + '&cometitle=1"><p>' + array[i].TITLE + '</p><em>' + array[i].FBTIME + '</em></a></li>';
+                }
+                $('#ul').html(html);
+            }
+        }
+    </script>
+</head>
+<body>
+<input id="shallGatewayUrl" type="hidden" value=""/>
+<input id="shallMessageSwitch" type="hidden" value="0"/>
+<input id="pidclass" type="hidden"/>
+<div class="new-body" id="New-Body">
+    <div class="new-head new-head-s2">
+        <div class="new-use new-use-s2">
+            <div class="new-use-logo"><img
+                    src="./wechat/images/uselogo.png"></div>
+            <!--卡信息-->
+            <div class="new-use-info">
+                <ul class="new-usein-b">
+                    <li><b id="indexUserName" class="new-font-b">许新年</b></li>
+                    <li><b id="indexSno"class="new-font-b">N190327132</b></li>
+                    <li><b id="indexDeptName" class="new-font-b"></b></li>
+                </ul>
+                <div class="new-usein-c"><span>借书证号</span>1121903271251</div>
+            </div>
+            <div class="new-use-photo">
+                <span class="new-use-photo-mian"><img id="avatar"
+                        src=""></span>
+            </div>
+        </div>
+        <div class="new-use-contact ">
+            <ul>
+                <li class="new-usec-left"><span>服务热线</span>(0591-22865316)</li>
+                <li class="new-usec-right"><span>网络安全与信息化办公室</span></li>
+            </ul>
+        </div>
+    </div>
+    <div class="new-box">
+        <div class="new-card new-cards2">
+            <ul>
+                <li class="new-card-item">
+                    <span>总资产</span>
+                    <b id="total_asset">0.00</b>
+                </li>
+                <li class="new-card-item">
+                    <span>校园卡</span>
+                    <b id="db_balance">0.00</b>
+                </li>
+                <li class="new-card-item">
+                    <span>过渡余额</span>
+                    <b id="unsettle_amount">0.00</b>
+                </li>
+                <li class="new-card-item">
+                    <span>电子账户</span>
+                    <b id="acc_balance">0.00</b>
+                </li>
+                <li class="justify-fix"></li>
+            </ul>
+        </div>
+    </div>
+    <div class="new-box">
+        <div class="new-box-title"><b></b><span>应用</span>
+            <a href="../url/redirectJkbh.html?jkbh=0003" jkbh="0003">
+                <i class="new-next">
+                    <img src="./wechat/images/ioc-next.png"></i>
+                <em class="y-title-more">点击查看更多</em></a>
+        </div>
+        <div class="new-box-contant">
+            <ul class="new-application" id="jk_list">
+            </ul>
+        </div>
+    </div>
+    
+</div>
+</body>
+</html>
+
+
+
+
+
+
+
+
+

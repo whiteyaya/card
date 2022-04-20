@@ -1,0 +1,230 @@
+<html lang="zh-CN"><head>
+    <meta charset="UTF-8">
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <title>福州大学电子通行码</title>
+    <link type="text/css" rel="stylesheet" href="./lib/app.css">
+    <link type="text/css" rel="stylesheet" href="./lib/style.css">
+    <script src="./lib/jquery-1.11.1.min.js"></script>
+    <script src="./lib/jquery.qrcode.js"></script>
+    <script src="./lib/utf.js"></script>
+    <style>
+body {
+    background:rgba(245,248,253,1);
+}
+.health-index{
+    padding: 16px;
+}
+.health-head {
+    background:linear-gradient(146deg,rgba(45,116,253,1) 0%,rgba(60,160,253,1) 100%);
+    box-shadow:0px 12px 16px 0px rgba(196,201,217,0.4);
+    border-radius:4px;
+    color: #fff;
+    padding: 16px;
+}
+.health-head-left,.health-head-right {
+    display: inline-block;
+    vertical-align: top;
+}
+.health-head-left {
+    width:calc(100% - 112px);
+}
+.health-head-left>div>img {
+    position: relative;
+    top: 2px;
+    margin-right: 4px;
+}
+.health-head-right {
+    width: 98px;
+}
+.health-head-right>img {
+    position: relative;
+    top: 5px;
+}
+.health-body{
+    margin-top: 16px;
+    padding: 16px 0;
+    text-align: center;
+    background:#fff;
+    box-shadow:0px 12px 16px 0px rgba(140,157,210,0.4);
+    border-radius:4px;
+}
+.health-body-date{
+    color:#151312;
+    font-size:30px;
+    line-height: 40px;
+    display:inline-block;
+}
+.health-body-time{
+    display:inline-block;
+}
+.health-body-time>div{
+    display: inline-block;
+    width:109px;
+    height: 30px;
+    line-height: 30px;
+    font-size: 30px;
+    margin: 12px 0;
+    border-radius:16px;
+    border:1px solid rgba(233,234,236,1);
+    
+}
+.passTimeSecond{
+    font-size:50px;
+    font-weight:bold;
+    color:red;
+    display: inline-block;
+    border:none !important;
+    font-size: 45px !important;
+    width:70px !important;
+}
+.health-body-code>div{
+    width:200px;
+    height:200px;
+    margin: 0 auto;
+}
+.health-body-des{
+    padding-top: 13px;
+    position: relative;
+}
+.health-body-des-font {
+    width:288px;
+    /*height:68px;*/
+    font-size:12px;
+    font-/*family:PingFangSC-Regular,PingFang SC;
+    font-weight:400;*/
+    color:#767B8D;
+    line-height:17px;
+    padding-left: 16px;
+    margin: 0 auto;
+    position: relative;
+    text-align: left;
+}
+.health-body-des-font > img {
+    position: absolute;
+    left: 0;
+}
+.health-foot {
+    padding-top: 24px;
+}
+.health-foot>label{
+    font-size:12px;
+    width: 48px;
+    display: inline-block;
+    vertical-align: top;
+    color:rgba(196,201,217,1);
+    position: relative;
+    top: -8px;
+}
+.health-foot>span{
+    height:1px;
+    display: inline-block;
+    vertical-align: top;
+    /*background-color: #C4C9D9;*/
+    border-top: solid 1px #C4C9D9;
+    width: calc((100% - 48px)/2 - 10px);
+}
+</style>
+<script>
+//动态获取时间
+window.setInterval(function (){
+	    		    var nowTime = getNowFormatDate();
+	    		    $(".passTimeMonth").text(getMonthAndDay());
+	    		    $(".passTime").text(nowTime.split(" ")[1].substring(0,5));
+	    		    $(".passTimeSecond").text(nowTime.split(" ")[1].substring(6,8));
+	    		},1000);
+
+function getNowFormatDate() {//获取当前时间
+	var date = new Date();
+	var seperator1 = "-";
+	var seperator2 = ":";
+	var month = date.getMonth() + 1<10? "0"+(date.getMonth() + 1):date.getMonth() + 1;
+	var strDate = date.getDate()<10? "0" + date.getDate():date.getDate();
+	var hour = date.getHours()<10?"0" + date.getHours():date.getHours();
+	var minute = date.getMinutes()<10?"0" + date.getMinutes():date.getMinutes();
+	var second = date.getSeconds()<10?"0" + date.getSeconds():date.getSeconds();
+	//var currentdate = date.getFullYear() + seperator1  + month  + seperator1  + strDate
+	var currentdate = month  + seperator1  + strDate
+			+ " "  + hour  + seperator2  + minute  + seperator2 + second
+			;
+	return currentdate;
+}
+function getMonthAndDay() {//获取当前时间
+	var date = new Date();
+	var month = date.getMonth() + 1;
+	var strDate = date.getDate();
+	var currentdate = month  + "月" + strDate +"日";
+	return currentdate;
+}
+</script></head>
+
+<body style="background-color:white;">
+    <div class="passApp">
+		<div class="passInfo" style="margin-top: 0%; text-align: initial; display: block;">
+			<div class="health-index">
+            <div class="health-head">
+                <div class="health-head-left">
+                    <div style="font-size:22px;" class="campusName">旗山校区</div>
+                    <div style="font-size:16px;padding:6px 0 0 0;" class="passTitle">学生电子通行码</div>
+                    <div style="font-size:18px;padding:16px 0 8px 0;width:900px;"><img src="./images/user.png"><span class="userName" style="font-weight:normal;font-size:18px;">张钟旺</span></div>
+                    <div style="font-size:16px;"><img src="./images/position.png"><span class="deptName">2019级计算机专硕2班(研)</span></div>
+                </div>
+                <div class="health-head-right">
+                    <img src="./images/logo.png" width="120">
+                </div>
+            </div>
+            <div class="health-body">
+                <div class="health-body-date passTimeMonth">3月17日</div>
+                <div class="health-body-time"><div class="passTimeSecond">58</div><div class="passTime">13:44</div></div>
+
+                <div class="health-body-code">
+                    <div id="qrCode" style="margin-top:10px;margin-bottom:20px;">
+                        <img src="./images/qrcode.png" width="200" height="200">
+                    </div>
+                </div>
+
+                <div class="plate" style="margin-top: -10px;"></div>
+                <div class="endTime"></div>
+                <div class="health-body-des">
+                    <div class="health-body-des-font"><img src="./images/tips.png" width="17" style="margin-left:-2px;"><span class="codeMsg" style="font-size:14px;">绿码：允许通行，请主动出示，配合核验，并做好自身防护，出行前请确认。</span><br><br></div>
+                </div>
+            </div>
+            <div class="health-foot">
+                <span></span>
+                <label>福州大学</label>
+                <span></span>
+            </div>  
+            </div>
+		</div>
+		<div class="errorInfo">
+            <img class="errorImg" src="./images/warning.png">
+            <p class="errorCampus" style="color:#3296FA;font-size:24px;"></p>
+            <p class="errorMsg" style="font-size:26px;">无该区域通行权限</p>
+            <p class="errorStartTime" style="font-size:16px;color:red;"></p>
+            <p class="errorEndTime" style="font-size:16px;color:red;"></p>
+        </div>
+    </div>
+
+</body>
+<script>
+function getParam(name) {
+        var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)");
+        var r = window.location.search.substr(1).match(reg);
+        if (r != null)
+            return decodeURI(r[2]);   //对参数进行decodeURI解码
+        return null;
+    }
+
+    $(function() {
+        var val1 = getParam("campusName");
+        var val2 = getParam("passTitle");
+        var val3 = getParam("userName");
+        var val4 = getParam("deptName");
+        $(".campusName").text(val1);
+        $(".passTitle").text(val2);
+        $(".userName").text(val3);
+        $(".deptName").text(val4);
+    });
+</script>
+</html>
